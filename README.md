@@ -6,7 +6,7 @@
 
 
 # File structure of implementation
-* **fn\_Adair\_Lopez\.R** is an R script that contains the `AdairLopezPrediction()` that predicts death registration completeness using the six models in Adair & Lopez (2018) -- Model 1 for females/males/both and Model 2 for females/males/both
+* **fn\_Adair\_Lopez\.R** is an R script that contains the `AdairLopezPrediction()` function that predicts death registration completeness using the six models in Adair & Lopez (2018) -- Model 1 for females/males/both and Model 2 for females/males/both
 
 * **Adair_Lopez_Coefficient_Estimates.Rdata** is an R-specific file that contains the following two data frames:
    + `AL_model_coefficients`, which shows the coefficient estimates from Table 2 of Adair & Lopez (2018) for the six models
