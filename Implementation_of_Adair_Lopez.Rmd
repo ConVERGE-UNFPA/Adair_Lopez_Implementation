@@ -1,0 +1,141 @@
+---
+title: "Implementation of Adair & Lopez (2018) Method"
+author: "Jeremy Roth"
+date: "17 July 2020"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setting up
+## Load required packages
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+## Specify directories where data and functions were saved
+```{r, warning=FALSE, message=FALSE}
+functions_dir <- "" # working directory 
+data_dir <- "" # working directory 
+```
+
+## Load our functions to implement the Adair & Lopez (2018) method
+```{r, warning=FALSE, message=FALSE}
+source(paste0(functions_dir,
+              "fn_Adair_Lopez.R"))
+```
+
+## Load coefficient estimates from Adair & Lopez (2018)
+```{r, warning=FALSE, message=FALSE}
+load(paste0(data_dir,
+            "Adair_Lopez_Coefficient_Estimates.Rdata"))
+```
+
+## Load example dataset from supplemental material of Adair & Lopez (2018)
+```{r, warning=FALSE, message=FALSE}
+national_data <- read.csv(paste0(data_dir,
+                                 "Supporting_information_data.csv"),
+                          stringsAsFactors=FALSE)
+# remove spaces from country names to help with merging in estimates of random intercepts
+national_data$Country <- str_replace_all(string=national_data$Country,
+                                         pattern=" ",
+                                         replacement="")
+# partition national-level dataset into three datasets: females, males, and both sexes combined
+national_data_both <- national_data %>% filter(sex == 3) ## combined for both sexes
+national_data_females <- national_data %>% filter(sex == 2) ## females only
+national_data_males <- national_data %>% filter(sex == 1) ## males only
+```
+
+# Compute estimates with Model 1 (under-five completeness included as predictor)
+## Model 1 - females and males combined
+```{r, warning=FALSE, message=FALSE}
+results_model1_both <- AdairLopezPrediction(data=national_data_both,
+                                            model.type="model1_both",
+                                            name.regCDR.per.1000="reg_cdr",
+                                            name.pct65.as.decimal="pct65",
+                                            name.under5.mortality.per.1000.livebirths="u5mr",
+                                            name.year="year",
+                                            name.country="Country",
+                                            name.under5.completeness.as.decimal="u5compl")
+results_model1_both %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                        head()
+```
+
+## Model 1 - females only
+```{r, warning=FALSE, message=FALSE}
+results_model1_females <- AdairLopezPrediction(data=national_data_females,
+                                               model.type="model1_females",
+                                               name.regCDR.per.1000="reg_cdr",
+                                               name.pct65.as.decimal="pct65",
+                                               name.under5.mortality.per.1000.livebirths="u5mr",
+                                               name.year="year",
+                                               name.country="Country",
+                                               name.under5.completeness.as.decimal="u5compl")
+results_model1_females %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                           head()
+```
+
+## Model 1 - males only
+```{r, warning=FALSE, message=FALSE}
+results_model1_males <- AdairLopezPrediction(data=national_data_males,
+                                             model.type="model1_males",
+                                             name.regCDR.per.1000="reg_cdr",
+                                             name.pct65.as.decimal="pct65",
+                                             name.under5.mortality.per.1000.livebirths="u5mr",
+                                             name.year="year",
+                                             name.country="Country",
+                                             name.under5.completeness.as.decimal="u5compl")
+results_model1_males %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                         head()
+```
+
+
+# Compute estimates with Model 2 (under-five completeness not included as predictor)
+## Model 2 - females and males combined
+```{r, warning=FALSE, message=FALSE}
+results_model2_both <- AdairLopezPrediction(data=national_data_both,
+                                            model.type="model2_both",
+                                            name.regCDR.per.1000="reg_cdr",
+                                            name.pct65.as.decimal="pct65",
+                                            name.under5.mortality.per.1000.livebirths="u5mr",
+                                            name.year="year",
+                                            name.country="Country",
+                                            name.under5.completeness.as.decimal="u5compl")
+results_model2_both %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                        head()
+```
+
+## Model 2 - females only
+```{r, warning=FALSE, message=FALSE}
+results_model2_females <- AdairLopezPrediction(data=national_data_females,
+                                               model.type="model2_females",
+                                               name.regCDR.per.1000="reg_cdr",
+                                               name.pct65.as.decimal="pct65",
+                                               name.under5.mortality.per.1000.livebirths="u5mr",
+                                               name.year="year",
+                                               name.country="Country",
+                                               name.under5.completeness.as.decimal="u5compl")
+results_model2_females %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                           head()
+```
+
+## Model 2 - males only
+```{r, warning=FALSE, message=FALSE}
+results_model2_males <- AdairLopezPrediction(data=national_data_males,
+                                             model.type="model2_males",
+                                             name.regCDR.per.1000="reg_cdr",
+                                             name.pct65.as.decimal="pct65",
+                                             name.under5.mortality.per.1000.livebirths="u5mr",
+                                             name.year="year",
+                                             name.country="Country",
+                                             name.under5.completeness.as.decimal="u5compl")
+results_model2_males %>% select(Country, year, sex, AL_predicted_completeness) %>%
+                         head()
+```
+
+# References
+Adair, Tim, and Alan D. Lopez. "Estimating the completeness of death registration: an empirical method." PloS one 13.5 (2018): e0197047.
